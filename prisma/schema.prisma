@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model people {
+  id           Int      @id
+  name         String?  @db.Text
+  gender       String?  @db.Text
+  height       Int?
+  mass         Float?   @db.Float
+  hair_color   String?  @db.Text
+  planet_id    Int
+  url          String?  @db.Text
+  created_date DateTime @default(now()) @db.Timestamp(0)
+  planet       planet   @relation(fields: [planet_id], references: [id], onUpdate: Restrict, map: "people_ibfk_1")
+
+  @@index([planet_id], map: "planet_id")
+}
+
+model planet {
+  id              Int      @id
+  name            String?  @db.Text
+  population      BigInt?
+  diameter        Int?
+  rotation_period Int?
+  orbital_period  Int?
+  created_date    DateTime @default(now()) @db.Timestamp(0)
+  people          people[]
+}
